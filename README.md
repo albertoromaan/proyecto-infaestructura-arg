@@ -1,4 +1,4 @@
-##Proyecto 1 Infraestructura Virtual##
+## Proyecto 1 Infraestructura Virtual
 
 **Que vamos a tocar en este proyecto**
 
