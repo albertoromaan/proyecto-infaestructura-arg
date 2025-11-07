@@ -42,7 +42,7 @@ locals {
 
   servers = {
     apache2 = {
-      name       = "apache2"
+      name       = "apache22"
       memory     = 1024
       vcpu       = 1
       base_image = "debian13-base.qcow2"
