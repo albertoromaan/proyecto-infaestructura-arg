@@ -1,5 +1,3 @@
-# Lista con diccionarios para indicar los datos de los virtualhost que se van a crear:
-# apache2
 virtualhosts:
   - name: example
     datos:
@@ -8,20 +6,9 @@ virtualhosts:
       errorlog: error_example
       accesslog: acceses_example
 
-
-# Lista con los módulos que hay que activar
-mods_enabled:
-  - rewrite
-
-
-# URL del repositorio
 guestbook_repo_url: "https://github.com/josedom24/guestbook_php.git"
 
-# Opcional: ruta base donde se alojarán los DocumentRoot
 base_web_path: "/var/www/example"
-
-
-# Variables de conexión a MariaDB para la aplicación guestbook
 
 guestbook_db_host: "mariadb.example.org"
 guestbook_db_user: "guestbook_user"

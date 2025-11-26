@@ -13,4 +13,5 @@
       10.0.0.1 apache2.example.org
     owner: root
     group: root
+
     mode: '0644'
