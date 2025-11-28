@@ -5,6 +5,13 @@ virtualhosts:
       documentroot: /var/www/example
       errorlog: error_example
       accesslog: acceses_example
+  
+  - name: phpmyadmin 
+    datos:
+      nameserver: phpmyadmin.example.org
+      documentroot: /usr/share/phpmyadmin
+      errorlog: error_phpmyadmin
+      accesslog: acceses_phpmyadmin
 
 guestbook_repo_url: "https://github.com/josedom24/guestbook_php.git"
 
