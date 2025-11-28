@@ -1,0 +1,77 @@
+- name: Instalar paquetes necesarios para Nginx y PHP
+  apt:
+    name:
+      - nginx
+      - php-fpm
+      - php-mysql
+      - php-mbstring
+      - git
+      - phpmyadmin
+    state: present
+    update_cache: yes
+
+- name: Detectar versión de PHP instalada
+  shell: php -v | head -n 1 | cut -d " " -f 2 | cut -d "." -f 1,2
+  register: php_version_output
+  changed_when: false
+
+- name: Establecer variable de versión de PHP
+  set_fact:
+    php_version: "{{ php_version_output.stdout }}"
+
+- name: Configuración de virtualhost para Nginx
+  template: 
+    src: etc/nginx/vhost.j2
+    dest: /etc/nginx/sites-available/{{item["name"]}}
+    owner: root
+    group: root
+  with_items:
+    - "{{virtualhosts}}"
+  notify: restart nginx
+
+- name: Crear DocumentRoot si no existe
+  ansible.builtin.file:
+    path: /{{item["datos"]["documentroot"]}}
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  with_items:
+    - "{{virtualhosts}}"
+
+- name: Activación de los VirtualHost en Nginx
+  file:
+    src: /etc/nginx/sites-available/{{item["name"]}}
+    dest: /etc/nginx/sites-enabled/{{item["name"]}}
+    state: link
+  with_items:
+    - "{{virtualhosts}}"
+  notify: restart nginx
+
+- name: Copiar aplicación Guestbook
+  ansible.builtin.copy:
+    src: app/
+    dest: "/{{ base_web_path }}/"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+    directory_mode: '0755'
+
+- name: Crear fichero de configuración config.php dentro de la aplicación
+  ansible.builtin.template:
+    src: config.php.j2
+    dest: "/{{ base_web_path }}/config.php"
+    owner: www-data
+    group: www-data
+
+- name: Asegurar que Nginx esté iniciado y habilitado
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: Asegurar que PHP-FPM esté iniciado y habilitado
+  ansible.builtin.service:
+    name: "php{{ php_version }}-fpm"
+    state: started
+    enabled: yes
