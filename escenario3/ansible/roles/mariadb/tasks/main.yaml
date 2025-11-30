@@ -58,3 +58,18 @@
     priv: "*.*:ALL,GRANT"
     state: present
     login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Crear base de datos para Joomla
+  community.mysql.mysql_db:
+    name: "{{ joomla_db_name }}"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Crear usuario de Joomla y otorgar privilegios
+  community.mysql.mysql_user:
+    name: "{{ joomla_db_user }}"
+    password: "{{ joomla_db_password }}"
+    host: "%"
+    priv: "{{ joomla_db_name }}.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock

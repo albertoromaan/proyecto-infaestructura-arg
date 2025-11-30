@@ -14,11 +14,11 @@ guestbook_db_host: "mariadb.example.org"
 guestbook_db_user: "guestbook_user"
 guestbook_db_password: "guestbook_pass"
 guestbook_db_name: "guestbook_db"
-joomla_db_password: "prueba1234"
 # phpMyAdmin configuration
 phpmyadmin_db_host: "{{ hostvars[groups['servidores_bd'][0]]['ansible_default_ipv4']['address'] }}"
 phpmyadmin_path: /var/www/phpmyadmin
 phpmyadmin_domain: phpmyadmin.local
 
-# Joomla configuration (si no las tienes ya)
-joomla_db_password: "joomla_secure_pass_123"
+joomla_db_name: joomla
+joomla_db_user: joomla
+joomla_db_password: joomla_pass_123
