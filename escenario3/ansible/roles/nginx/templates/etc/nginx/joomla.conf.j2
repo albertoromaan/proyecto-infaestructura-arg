@@ -1,0 +1,32 @@
+server {
+    listen 80;
+    server_name {{ ansible_default_ipv4.address }};
+    root /var/www/joomla;
+    index index.php index.html;
+
+    access_log /var/log/nginx/joomla_access.log;
+    error_log /var/log/nginx/joomla_error.log;
+
+    location / {
+        try_files $uri $uri/ /index.php?$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_pass unix:/var/run/php/php-fpm.sock;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_index index.php;
+    }
+
+    location ~* \.(jpg|jpeg|gif|png|css|js|ico|xml)$ {
+        expires 30d;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    location ~ /\.(git|svn) {
+        deny all;
+    }
+}

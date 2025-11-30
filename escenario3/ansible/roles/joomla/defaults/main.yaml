@@ -1,0 +1,7 @@
+---
+joomla_version: "5.2.2"
+joomla_db_name: joomla
+joomla_db_user: joomla
+joomla_db_password: joomla_pass_123
+joomla_db_host: localhost
+joomla_install_path: /var/www/joomla

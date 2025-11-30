@@ -6,13 +6,6 @@ virtualhosts:
       errorlog: error_example
       accesslog: acceses_example
   
-  - name: phpmyadmin 
-    datos:
-      nameserver: phpmyadmin.example.org
-      documentroot: /usr/share/phpmyadmin
-      errorlog: error_phpmyadmin
-      accesslog: acceses_phpmyadmin
-
 guestbook_repo_url: "https://github.com/josedom24/guestbook_php.git"
 
 base_web_path: "/var/www/example"
@@ -21,3 +14,11 @@ guestbook_db_host: "mariadb.example.org"
 guestbook_db_user: "guestbook_user"
 guestbook_db_password: "guestbook_pass"
 guestbook_db_name: "guestbook_db"
+joomla_db_password: "prueba1234"
+# phpMyAdmin configuration
+phpmyadmin_db_host: "{{ hostvars[groups['servidores_bd'][0]]['ansible_default_ipv4']['address'] }}"
+phpmyadmin_path: /var/www/phpmyadmin
+phpmyadmin_domain: phpmyadmin.local
+
+# Joomla configuration (si no las tienes ya)
+joomla_db_password: "joomla_secure_pass_123"

@@ -6,7 +6,6 @@
       - php-mysql
       - php-mbstring
       - git
-      - phpmyadmin
     state: present
     update_cache: yes
 
@@ -75,3 +74,21 @@
     name: "php{{ php_version }}-fpm"
     state: started
     enabled: yes
+- name: Copy Joomla Nginx configuration
+  template:
+    src: etc/nginx/joomla.conf.j2
+    dest: /etc/nginx/sites-available/joomla.conf
+  notify: restart nginx
+
+- name: Enable Joomla site
+  file:
+    src: /etc/nginx/sites-available/joomla.conf
+    dest: /etc/nginx/sites-enabled/joomla.conf
+    state: link
+  notify: restart nginx
+
+- name: Remove default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx

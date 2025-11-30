@@ -1,0 +1,56 @@
+---
+- name: Install PHP and extensions for Joomla
+  apt:
+    name:
+      - php-fpm
+      - php-mysql
+      - php-curl
+      - php-gd
+      - php-mbstring
+      - php-xml
+      - php-zip
+      - php-json
+      - php-intl
+      - unzip
+      - curl
+      - wget
+    state: present
+    update_cache: yes
+
+- name: Create Joomla directory
+  file:
+    path: "{{ joomla_install_path }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Download Joomla using shell
+  shell: |
+    wget -O /tmp/joomla.zip https://github.com/joomla/joomla-cms/releases/download/5.2.1/Joomla_5.2.1-Stable-Full_Package.zip
+  args:
+    creates: /tmp/joomla.zip
+
+- name: Extract Joomla
+  unarchive:
+    src: /tmp/joomla.zip
+    dest: "{{ joomla_install_path }}"
+    remote_src: yes
+    owner: www-data
+    group: www-data
+
+- name: Set permissions on directories
+  shell: find {{ joomla_install_path }}/ -type d -exec chmod 755 {} \;
+  
+- name: Set permissions on files
+  shell: find {{ joomla_install_path }}/ -type f -exec chmod 644 {} \;
+
+- name: Copy Joomla configuration template
+  template:
+    src: configuration.php.j2
+    dest: "{{ joomla_install_path }}/configuration.php"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+  when: joomla_auto_configure | default(false)
+  notify: restart php-fpm

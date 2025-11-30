@@ -49,3 +49,12 @@
     line: 'bind-address = 0.0.0.0'
     state: present
   notify: restart mariadb
+
+- name: Crear usuario admin para phpMyAdmin
+  community.mysql.mysql_user:
+    name: "admin"
+    password: "admin123"
+    host: "%"
+    priv: "*.*:ALL,GRANT"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock

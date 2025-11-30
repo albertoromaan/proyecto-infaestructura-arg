@@ -1,0 +1,76 @@
+---
+- name: Install PHP dependencies for phpMyAdmin
+  apt:
+    name:
+      - php-mbstring
+      - php-zip
+      - php-gd
+      - php-json
+      - php-curl
+      - wget
+      - unzip
+    state: present
+    update_cache: yes
+
+- name: Create phpMyAdmin directory
+  file:
+    path: "{{ phpmyadmin_path }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Download phpMyAdmin
+  shell: |
+    wget -O /tmp/phpMyAdmin.tar.gz https://files.phpmyadmin.net/phpMyAdmin/5.2.1/phpMyAdmin-5.2.1-all-languages.tar.gz
+  args:
+    creates: /tmp/phpMyAdmin.tar.gz
+
+- name: Extract phpMyAdmin
+  unarchive:
+    src: /tmp/phpMyAdmin.tar.gz
+    dest: /tmp/
+    remote_src: yes
+
+- name: Copy phpMyAdmin files
+  shell: |
+    cp -r /tmp/phpMyAdmin-5.2.1-all-languages/* {{ phpmyadmin_path }}/
+  args:
+    creates: "{{ phpmyadmin_path }}/index.php"
+
+- name: Create tmp directory for phpMyAdmin
+  file:
+    path: "{{ phpmyadmin_path }}/tmp"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- name: Configure phpMyAdmin from template
+  template:
+    src: config.inc.php.j2
+    dest: "{{ phpmyadmin_path }}/config.inc.php"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Set permissions on phpMyAdmin directory
+  file:
+    path: "{{ phpmyadmin_path }}"
+    owner: www-data
+    group: www-data
+    recurse: yes
+    state: directory
+
+- name: Copy phpMyAdmin Nginx configuration
+  template:
+    src: nginx-phpmyadmin.conf.j2
+    dest: /etc/nginx/sites-available/phpmyadmin.conf
+  notify: restart nginx
+
+- name: Enable phpMyAdmin site
+  file:
+    src: /etc/nginx/sites-available/phpmyadmin.conf
+    dest: /etc/nginx/sites-enabled/phpmyadmin.conf
+    state: link
+  notify: restart nginx
